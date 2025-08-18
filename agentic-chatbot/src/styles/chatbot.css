@@ -6,7 +6,7 @@
   --neon-green: #00ffae;
   --glass-bg: rgba(25, 28, 38, 0.7);
   --glass-blur: 18px;
-  --bot-gradient: linear-gradient(90deg, #00eaff 0%, #00ffae 100%);
+  --bot-gradient: linear-gradient(90deg, #4c1d95 0%, #7c3aed 100%);
   --user-gradient: linear-gradient(90deg, #ff00ea 0%, #00eaff 100%);
 }
 
@@ -33,12 +33,13 @@ body {
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border-radius: 32px;
   border: 1.5px solid var(--neon-blue);
-  max-width: 420px;
+  max-width: 1100px; /* increased width for desktop */
   width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding: 28px; /* more breathing room */
 }
 
 .chat-header {
@@ -58,12 +59,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 24px 20px 12px 20px;
+  padding: 28px 30px 40px 30px;
   overflow-y: auto;
   min-height: 320px;
   max-height: 55vh;
   scrollbar-width: thin;
   scrollbar-color: var(--neon-blue) #232a3a;
+  background: linear-gradient(180deg, rgba(16,8,32,0.12), rgba(8,4,24,0.28));
+  border-radius: 18px;
 }
 
 .chat-window::-webkit-scrollbar {
@@ -75,31 +78,35 @@ body {
 }
 
 .message-bubble {
-  padding: 14px 22px;
+  padding: 16px 22px;
   border-radius: 22px;
-  font-size: 1.05rem;
+  font-size: 1rem; /* consistent readable size */
+  line-height: 1.5;
   max-width: 80%;
   word-break: break-word;
   margin-bottom: 2px;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,0.12);
   animation: fadeIn 0.4s cubic-bezier(.4,0,.2,1);
   transition: background 0.2s, color 0.2s;
+  color: #fff; /* default to white for high contrast */
 }
 
 .message-bubble.user {
-  background: var(--user-gradient);
-  color: #fff;
+  background: linear-gradient(90deg, rgba(255,0,234,0.95) 0%, rgba(0,234,255,0.95) 100%);
+  color: #08101a;
+  font-weight: 600;
   align-self: flex-end;
   border-bottom-right-radius: 8px;
   border: 1.5px solid var(--neon-pink);
 }
 
 .message-bubble.bot {
-  background: var(--bot-gradient);
-  color: #181c24;
+  background: linear-gradient(90deg, rgba(76,29,149,0.98) 0%, rgba(124,58,237,0.98) 100%);
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.45);
   align-self: flex-start;
   border-bottom-left-radius: 8px;
-  border: 1.5px solid var(--neon-blue);
+  border: none;
 }
 
 @keyframes fadeIn {
@@ -161,6 +168,12 @@ body {
   background: rgba(36, 40, 54, 0.9);
 }
 
+/* Improve input placeholder legibility */
+.chat-input::placeholder {
+  color: rgba(255,255,255,0.75);
+  opacity: 1;
+}
+
 .send-btn {
   background: var(--neon-blue);
   color: #181c24;
@@ -179,22 +192,132 @@ body {
   box-shadow: 0 2px 16px 0 rgba(255,0,234,0.18);
 }
 
-@media (max-width: 600px) {
-  .chat-container {
-    max-width: 100vw;
-    border-radius: 0;
-    margin: 0;
-  }
-  .chat-header {
-    padding: 16px 8px;
-    font-size: 1rem;
-  }
-  .chat-window {
-    padding: 14px 6px 8px 6px;
-    min-height: 220px;
-    max-height: 45vh;
-  }
-  .chat-input-area {
-    padding: 10px 8px;
-  }
+/* timestamp / meta info for messages */
+.timestamp {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.72);
+  opacity: 0.9;
+}
+
+/* Quick action buttons — increase contrast and weight */
+.button-default {
+  background: rgba(255,255,255,0.06);
+  color: #efeaff;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.button-default svg { opacity: 0.95; }
+
+/* Missing utility colors and opacity variants used by JSX */
+.bg-white\/5 { background-color: rgba(255,255,255,0.05); }
+.bg-white\/20 { background-color: rgba(255,255,255,0.2); }
+.text-white { color: #fff !important; }
+.opacity-95 { opacity: 0.95; }
+.placeholder-gray-300 { color: rgba(203,213,225,0.9); }
+
+/* Gradient color stop helpers used by components */
+.from-purple-500 { --tw-gradient-from: #7c3aed; background-image: linear-gradient(90deg,#7c3aed 0%, #ec4899 100%); }
+.to-pink-500 { --tw-gradient-to: #ec4899; }
+.from-purple-600 { --tw-gradient-from: #6d28d9; }
+.to-pink-600 { --tw-gradient-to: #db2777; }
+
+/* Disabled state helpers */
+.disabled\:opacity-50:disabled { opacity: 0.5; }
+.disabled\:scale-100:disabled { transform: scale(1); }
+
+/* Ensure svg icons inherit color */
+button svg, .w-12 svg { color: inherit; stroke: currentColor; }
+
+/* Make quick-action buttons slightly larger and text visible */
+.grid button { min-height: 56px; }
+.grid button span { color: #f3e8ff; font-weight: 600; }
+
+/* Ensure input and send icon visibility */
+.mt-6 .p-4 svg { color: #fff; }
+
+/* Tailwind-like utility fallbacks for this project (minimal subset used by components) */
+.min-h-screen { min-height: 100vh; }
+.bg-gradient-to-br { background: linear-gradient(135deg, #0f1724 0%, #5b21b6 50%, #0f1724 100%); }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.overflow-hidden { overflow: hidden; }
+.container { max-width: 1100px; margin-left: auto; margin-right: auto; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+.h-screen { height: 100vh; }
+.flex { display: flex; }
+.flex-1 { flex: 1 1 auto; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.space-x-4 { gap: 1rem; }
+.gap-3 { gap: .75rem; }
+.bg-black\/20 { background-color: rgba(0,0,0,0.2); }
+.bg-white\/10 { background-color: rgba(255,255,255,0.1); }
+.backdrop-blur-xl { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.border { border: 1px solid rgba(255,255,255,0.06); }
+.border-white\/10 { border-color: rgba(255,255,255,0.1); }
+.rounded-2xl { border-radius: 16px; }
+.rounded-xl { border-radius: 12px; }
+.p-6 { padding: 1.5rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.w-12 { width: 3rem; }
+.h-12 { height: 3rem; }
+.bg-gradient-to-r { background: linear-gradient(90deg, #7c3aed 0%, #ec4899 100%); }
+.text-white { color: #fff; }
+.text-2xl { font-size: 1.5rem; font-weight: 700; }
+.text-sm { font-size: .9rem; }
+.p-4 { padding: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.rounded-full { border-radius: 9999px; }
+.shadow-lg { box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
+.transition-all { transition: all 0.2s ease; }
+.hover\:bg-white\/20:hover { background-color: rgba(255,255,255,0.2); }
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.lg\:grid-cols-6 { grid-template-columns: repeat(6, minmax(0,1fr)); }
+.gap-3 { gap: .75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.text-purple-300 { color: #c4b5fd; }
+.text-purple-400 { color: #a78bfa; }
+.text-purple-200 { color: #e9d5ff; }
+.text-purple-300 { color: #c4b5fd; }
+.text-gray-300 { color: #d1d5db; }
+.text-gray-400 { color: #9ca3af; }
+.text-purple-400 { color: #a78bfa; }
+.bg-purple-500\/20 { background-color: rgba(124,58,237,0.18); }
+.bg-purple-500 { background-color: #7c3aed; }
+.bg-blue-500\/10 { background-color: rgba(59,130,246,0.1); }
+.bg-pink-500\/10 { background-color: rgba(236,72,153,0.1); }
+.w-full { width: 100%; }
+.rounded-2xl { border-radius: 16px; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-3 { margin-top: .75rem; }
+.mt-4 { margin-top: 1rem; }
+.space-y-4 > * + * { margin-top: 1rem; }
+.overflow-y-auto { overflow-y: auto; }
+.space-y-4 { gap: 1rem; }
+.scrollbar-thin { scrollbar-width: thin; }
+.scrollbar-track-transparent { scrollbar-color: rgba(0,0,0,0) rgba(0,0,0,0); }
+.scrollbar-thumb-purple-500\/30::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); }
+
+/* Buttons and small elements */
+.button-default { padding: .6rem 1rem; border-radius: 12px; background: rgba(255,255,255,0.04); color: #fff; border: 1px solid rgba(255,255,255,0.06); }
+
+/* Utility for small text/truncate */
+.truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* small utility for headings */
+.h3-strong { font-size: 1.125rem; font-weight: 700; color: #f3e8ff; }
+
+/* Responsive adjustments - basic */
+@media (max-width: 768px) {
+  .container { padding-left: .75rem; padding-right: .75rem; }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
