@@ -10,11 +10,14 @@ const App = () => {
   const [messages, setMessages] = useState([
     {
       id: '1',
-      text: "Hello! I'm Nova, your AI-powered support assistant. How can I help you today?",
+      text: "Hello! I'm your Customer Support Assistant. I'm here to help with orders, billing, technical issues, and more — how can I assist you today?",
       sender: 'bot',
       timestamp: new Date(),
     }
   ]);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showTimestamps, setShowTimestamps] = useState(true);
+
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -115,6 +118,22 @@ const App = () => {
     setTimeout(() => handleSendMessage(), 100);
   };
 
+  const toggleSettings = () => setShowSettings(s => !s);
+  
+  const clearChat = () => {
+    setMessages([
+      {
+        id: '1',
+        text: "Hello! I'm your Customer Support Assistant. I'm here to help with orders, billing, technical issues, and more — how can I assist you today?",
+        sender: 'bot',
+        timestamp: new Date(),
+      }
+    ]);
+    setShowSettings(false);
+  };
+  
+  const toggleTimestamps = () => setShowTimestamps(s => !s);
+
   const toggleVoiceInput = () => {
     setIsListening(!isListening);
     setTimeout(() => {
@@ -139,7 +158,7 @@ const App = () => {
               <Bot className="text-white" size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Nova AI Support</h1>
+              <h1 className="text-2xl font-bold text-white">Chatbot for Customer Support</h1>
               <p className="text-purple-300">Powered by Advanced Neural Networks</p>
             </div>
           </div>
@@ -147,7 +166,7 @@ const App = () => {
             <button className="p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
               <Search className="text-white" size={20} />
             </button>
-            <button className="p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+            <button onClick={toggleSettings} className="p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
               <Settings className="text-white" size={20} />
             </button>
           </div>
@@ -161,6 +180,23 @@ const App = () => {
           ref={chatContainerRef}
           className="flex-1 bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl p-6 overflow-hidden flex flex-col"
         >
+          {/* Settings panel */}
+          {showSettings && (
+            <div className="settings-panel absolute top-24 right-8 z-30 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-4 w-64 shadow-xl">
+              <h4 className="text-white font-semibold mb-2">Settings</h4>
+              <div className="mb-2">
+                <label className="flex items-center space-x-2">
+                  <input type="checkbox" checked={showTimestamps} onChange={toggleTimestamps} />
+                  <span className="text-sm text-purple-200">Show timestamps</span>
+                </label>
+              </div>
+              <div className="flex space-x-2 mt-3">
+                <button onClick={clearChat} className="button-default text-sm">Clear chat</button>
+                <button onClick={() => setShowSettings(false)} className="button-default text-sm">Close</button>
+              </div>
+            </div>
+          )}
+
           {/* Messages */}
           <div className="flex-1 overflow-y-auto space-y-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-500/30">
             {messages.map((message) => (
@@ -168,6 +204,7 @@ const App = () => {
                 key={message.id} 
                 message={message}
                 products={message.productData}
+                showTimestamp={showTimestamps}
               />
             ))}
             {isTyping && <TypingIndicator />}
@@ -176,30 +213,29 @@ const App = () => {
 
           {/* Input Area */}
           <div className="mt-6 flex items-center space-x-4">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Type your message here..."
-                className="w-full bg-black/30 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-4 text-white placeholder-gray-300 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
-              />
-              <button
-                onClick={toggleVoiceInput}
-                className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-xl transition-all duration-300 ${
-                  isListening 
-                    ? 'bg-red-500 text-white animate-pulse' 
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                }`}
-              >
-                <Mic size={20} />
-              </button>
-            </div>
+            {/* Mic button on the left (separate) */}
+            <button
+              onClick={toggleVoiceInput}
+              className={`p-3 rounded-xl transition-all duration-300 mic-button ${isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-white/10 text-gray-200 hover:bg-white/20'}`}
+            >
+              <Mic size={20} />
+            </button>
+
+            {/* Message input */}
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              placeholder="Type your message here..."
+              className="chat-input w-full rounded-2xl px-6 py-4 placeholder-gray-400 focus:outline-none transition-all duration-300"
+            />
+
+            {/* Send button to the right */}
             <button
               onClick={handleSendMessage}
               disabled={!inputText.trim()}
-              className="p-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-600 disabled:to-gray-600 rounded-2xl text-white transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:opacity-50"
+              className="p-4 send-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-600 disabled:to-gray-600 rounded-2xl text-white transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:opacity-50"
             >
               <Send size={20} />
             </button>

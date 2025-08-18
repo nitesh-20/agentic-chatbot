@@ -154,18 +154,18 @@ body {
 
 .chat-input {
   flex: 1;
-  background: rgba(36, 40, 54, 0.7);
-  border: 1.5px solid var(--neon-blue);
+  background: #fff;
+  color: #111827;
+  border: 2px solid rgba(124,58,237,0.15);
   border-radius: 18px;
   padding: 12px 18px;
-  color: #fff;
   font-size: 1.05rem;
   outline: none;
   transition: border 0.2s, background 0.2s;
 }
 .chat-input:focus {
-  border: 1.5px solid var(--neon-pink);
-  background: rgba(36, 40, 54, 0.9);
+  border-color: rgba(124,58,237,0.9);
+  box-shadow: 0 6px 24px rgba(124,58,237,0.12);
 }
 
 /* Improve input placeholder legibility */
@@ -174,7 +174,20 @@ body {
   opacity: 1;
 }
 
+.mic-button {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .send-btn {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: var(--neon-blue);
   color: #181c24;
   border: none;
@@ -191,6 +204,31 @@ body {
   color: #fff;
   box-shadow: 0 2px 16px 0 rgba(255,0,234,0.18);
 }
+
+/* Separate spacing between mic and input */
+.mt-6 .chat-input { margin-left: 8px; margin-right: 8px; }
+
+/* Better avatar spacing and less 'stuck' feel */
+.message-bubble + .message-bubble { margin-top: 12px; }
+.flex.items-start.space-x-3 { gap: 12px; }
+
+/* Avatar padding adjustments */
+.w-10.h-10 { padding: 6px; }
+
+/* Better bubble roundedness and float */
+.px-6.py-4.rounded-2xl { border-radius: 18px; }
+
+/* Tweak timestamp placement */
+.text-xs.text-gray-400 { color: rgba(255,255,255,0.7); }
+
+/* ensure mic icon is centered and visible */
+.mic-button svg { color: #fff; }
+
+/* ensure send icon color */
+.send-btn svg { color: #fff; }
+
+/* Typing indicator box adjustments */
+.typing-box { display: inline-block; padding: 10px 14px; border-radius: 16px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
 
 /* timestamp / meta info for messages */
 .timestamp {
@@ -321,3 +359,56 @@ button svg, .w-12 svg { color: inherit; stroke: currentColor; }
   .container { padding-left: .75rem; padding-right: .75rem; }
   .grid-cols-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
+
+/* Ensure utility classes for message bubble variants are explicit */
+.bg-black\/40 { background-color: rgba(0,0,0,0.4); }
+
+/* User bubble gradient (clearer, brighter) */
+.bg-gradient-to-r.from-purple-600.to-pink-600 {
+  background: linear-gradient(90deg, #6d28d9 0%, #ec4899 100%);
+  color: #fff;
+}
+
+/* Bot bubble: deeper purple, slightly translucent */
+.bg-gradient-to-r.from-purple-500.to-pink-500, .bot-gradient {
+  background: linear-gradient(90deg, #4c1d95 0%, #7c3aed 100%);
+  color: #fff;
+}
+
+/* Borders for bubbles */
+.border-purple-500\/20 { border-color: rgba(124,58,237,0.22); }
+.border-white\/10 { border-color: rgba(255,255,255,0.08); }
+
+/* Adjust avatar alignment so they don't overlap bubbles */
+.flex.items-start.space-x-3 { align-items: flex-start; }
+
+/* Status bar action buttons (Call Support / Live Chat) styling */
+.mt-6.bg-black\/20.backdrop-blur-xl .flex.items-center.space-x-4 button.text-purple-300 {
+  background: linear-gradient(90deg, rgba(124,58,237,0.12), rgba(236,72,153,0.06));
+  color: #e9d5ff;
+  border: 1px solid rgba(124,58,237,0.12);
+  padding: 6px 10px;
+  border-radius: 12px;
+}
+.mt-6.bg-black\/20.backdrop-blur-xl .flex.items-center.space-x-4 button.text-purple-300:hover {
+  background: linear-gradient(90deg, rgba(124,58,237,0.18), rgba(236,72,153,0.12));
+  color: #fff;
+}
+
+/* Ensure small status action text uses proper color */
+.mt-6 .text-sm { color: #e6e0ff; }
+
+/* Fix for quick-action button icons and labels to ensure contrast */
+.grid button { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); }
+.grid button:hover { background: rgba(255,255,255,0.06); }
+.grid button span { color: #efeaff; }
+
+/* Improve typing indicator visibility inside messages list */
+.typing-box { background: rgba(255,255,255,0.04); color: #efeaff; }
+
+/* Make sure user avatar uses cyan gradient and bot avatar uses pink/purple */
+.w-10.h-10.bg-gradient-to-r.from-blue-500.to-cyan-500 { background: linear-gradient(90deg,#06b6d4 0%, #06b6d4 100%); }
+.w-10.h-10.bg-gradient-to-r.from-purple-500.to-pink-500 { background: linear-gradient(90deg,#7c3aed 0%, #ec4899 100%); }
+
+/* small polish: increase bubble shadow for depth */
+.px-6.py-4.rounded-2xl.shadow-lg { box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
