@@ -51,6 +51,91 @@ const App = () => {
     }
   ];
 
+  // Google Gemini / Vertex AI examples (real API shapes + commented code)
+  // NOTE: Do NOT call Vertex/Google AI directly from client with service account credentials.
+  // Run these examples from a secure server or proxy; if you must use a client-side key, keep it restricted.
+  // --- Types (JSDoc) ---
+  /**
+   * @typedef {Object} GeminiRequest
+   * @property {string} prompt  The user prompt/text to generate from
+   * @property {number} [max_tokens] Max number of tokens to generate
+   * @property {number} [temperature] Sampling temperature (0-1)
+   */
+  /**
+   * @typedef {Object} GeminiResponse
+   * @property {string} text   Generated text from the model
+   * @property {Object} raw   Raw provider response (keeps provider-specific fields)
+   */
+
+  // Example A: Vertex AI (Google Cloud) - REST predict (server-side)
+  // Replace PROJECT_ID, LOCATION, MODEL_ID and obtain a valid OAuth 2.0 token for a service account.
+  /*
+  async function fetchVertexPredictServerSide(prompt) {
+    // Server-side example using application default credentials or service account
+    const PROJECT_ID = 'your-project-id';
+    const LOCATION = 'us-central1';
+    const MODEL_ID = 'text-bison@001'; // or your Gemini model name
+    const url = `https://us-central1-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/models/${MODEL_ID}:predict`;
+
+    const body = {
+      instances: [ { content: prompt } ],
+      parameters: { maxOutputTokens: 512, temperature: 0.2 }
+    };
+
+    // Get OAuth bearer token server-side (do not do this in browser)
+    const accessToken = await getServerSideAccessToken(); // implement using google-auth-library or metadata server
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    const json = await res.json();
+    // Vertex/Gen response shapes vary; map to GeminiResponse
+    return {
+      text: json?.predictions?.[0]?.content || json?.predictions?.[0]?.outputs?.[0]?.data?.text || JSON.stringify(json),
+      raw: json,
+    };
+  }
+  */
+
+  // Example B: Vertex AI with API Key (restricted key, still server-side recommended)
+  /*
+  async function fetchVertexWithApiKey(prompt) {
+    const PROJECT_ID = 'your-project-id';
+    const LOCATION = 'us-central1';
+    const MODEL_ID = 'text-bison@001';
+    const API_KEY = process.env.VERTEX_API_KEY; // store on server or in env
+    const url = `https://us-central1-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/models/${MODEL_ID}:predict?key=${API_KEY}`;
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ instances: [{ content: prompt }], parameters: { maxOutputTokens: 512 } }),
+    });
+    return { text: (await res.json()) };
+  }
+  */
+
+  // Example C: Lightweight client->server flow (recommended)
+  // Client sends prompt to your backend (/api/generate), backend calls Vertex/OpenAI/Gemini, returns safe result.
+  /*
+  // Client (browser) - simple POST to your server
+  async function requestFromBackend(prompt) {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+    return res.json(); // { text: '...', raw: {...} }
+  }
+  */
+
+  // Keep existing local fallback NLU logic unchanged below.
   const generateBotResponse = (userMessage) => {
     const lowerMessage = userMessage.toLowerCase();
     if (lowerMessage.includes('product') || lowerMessage.includes('buy') || lowerMessage.includes('price')) {
@@ -159,7 +244,6 @@ const App = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">Chatbot for Customer Support</h1>
-              <p className="text-purple-300">Powered by Advanced Neural Networks</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
